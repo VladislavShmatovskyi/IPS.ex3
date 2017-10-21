@@ -98,17 +98,11 @@ int main()
 	double *result = new double[test_matrix_lines];
 
 	// инициализация тестовой матрицы
-	test_matrix[0][0] = 2; test_matrix[0][1] = 5;  test_matrix[0][2] = 4;  test_matrix[0][3] = 1;  test_matrix[0][4] = 20;
+	/*test_matrix[0][0] = 2; test_matrix[0][1] = 5;  test_matrix[0][2] = 4;  test_matrix[0][3] = 1;  test_matrix[0][4] = 20;
 	test_matrix[1][0] = 1; test_matrix[1][1] = 3;  test_matrix[1][2] = 2;  test_matrix[1][3] = 1;  test_matrix[1][4] = 11;
 	test_matrix[2][0] = 2; test_matrix[2][1] = 10; test_matrix[2][2] = 9;  test_matrix[2][3] = 7;  test_matrix[2][4] = 40;
-	test_matrix[3][0] = 3; test_matrix[3][1] = 8;  test_matrix[3][2] = 9;  test_matrix[3][3] = 2;  test_matrix[3][4] = 37;
-
-	for (i = 0; i < test_matrix_lines ; ++i)
-	{
-		for (int j = 0; j < test_matrix_lines + 1; j++)
-			printf("el(%d)(%d) = %lf ", i, j, test_matrix[i][j]);
-		printf("\n");
-	}
+	test_matrix[3][0] = 3; test_matrix[3][1] = 8;  test_matrix[3][2] = 9;  test_matrix[3][3] = 2;  test_matrix[3][4] = 37;*/
+	InitMatrix(test_matrix);
 
 	SerialGaussMethod(test_matrix, test_matrix_lines, result);
 
