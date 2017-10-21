@@ -33,18 +33,52 @@ void InitMatrix(double** matrix)
 /// последний столбей матрицы - значения правых частей уравнений
 /// rows - количество строк в исходной матрице
 /// result - массив ответов СЛАУ
-void SerialGaussMethod(double **matrix, const int rows, double* result)
+double SerialGaussMethod(double **matrix, const int rows, double* result, double durS)
 {
 	int k;
 	double koef;
-	duration<double> duration; 
-	// прямой ход метода Гаусса
+	duration<double> duration; /// Перемнная для измерения времени
+
+							   //Замеряем время для прямого хода метода Гаусса
 	high_resolution_clock::time_point t1 = high_resolution_clock::now();
+	// прямой ход метода Гаусса
 	for (k = 0; k < rows; ++k)
 	{
+		//
+		for (int i = k + 1; i < rows; ++i)
+		{
+			koef = -matrix[i][k] / matrix[k][k];
 
+			for (int j = k; j <= rows; ++j)
+			{
+				matrix[i][j] += koef * matrix[k][j];
+			}
+		}
+	}
+	high_resolution_clock::time_point t2 = high_resolution_clock::now();
+	duration = (t2 - t1);
+	durS = duration.count();
+	printf("Duration is: %lf seconds (Serial code)\n", durS); // Выводим время работы прямого хода
+
+															  // обратный ход метода Гаусса
+	result[rows - 1] = matrix[rows - 1][rows] / matrix[rows - 1][rows - 1];
+
+	for (k = rows - 2; k >= 0; --k)
+	{
+		result[k] = matrix[k][rows];
+
+		//
+		for (int j = k + 1; j < rows; ++j)
+		{
+			result[k] -= matrix[k][j] * result[j];
+		}
+
+		result[k] /= matrix[k][k];
+	}
+	return durS;
+}
 		/// Функция ParallelGaussMethod() решает СЛАУ методом Гаусса 
-void ParallelGaussMethod(double **matrix, const int rows, double* result)
+double ParallelGaussMethod(double **matrix, const int rows, double* result, double durP)
 {
 	int k;
 	double koef;
@@ -111,6 +145,7 @@ void ParallelGaussMethod(double **matrix, const int rows, double* result)
 		result[k] = res.get_value();
 		result[k] /= matrix[k][k];
 	}
+	return durP;
 }
 
 
@@ -120,7 +155,7 @@ int main()
 
 
 	int i;
-
+	double dS, dP;
 	// кол-во строк в матрице, приводимой в качестве примера
 	//const int test_matrix_lines = 4;//Изменяем размерность на MATRIX_SIZE
 
@@ -136,7 +171,7 @@ int main()
 
 	// массив решений СЛАУ
 	double *result = new double[MATRIX_SIZE];
-
+	double *rP = new double[MATRIX_SIZE];
 	// инициализация тестовой матрицы
 	/*test_matrix[0][0] = 2; test_matrix[0][1] = 5;  test_matrix[0][2] = 4;  test_matrix[0][3] = 1;  test_matrix[0][4] = 20;
 	test_matrix[1][0] = 1; test_matrix[1][1] = 3;  test_matrix[1][2] = 2;  test_matrix[1][3] = 1;  test_matrix[1][4] = 11;
@@ -144,20 +179,20 @@ int main()
 	test_matrix[3][0] = 3; test_matrix[3][1] = 8;  test_matrix[3][2] = 9;  test_matrix[3][3] = 2;  test_matrix[3][4] = 37;*/
 	InitMatrix(test_matrix);
 
-	//SerialGaussMethod(test_matrix, MATRIX_SIZE, result);
-	ParallelGaussMethod(test_matrix, MATRIX_SIZE, result);
+	dS = SerialGaussMethod(test_matrix, MATRIX_SIZE, result, dS);
+	dP = ParallelGaussMethod(test_matrix, MATRIX_SIZE, rP, dP);
 	for (i = 0; i < MATRIX_SIZE; ++i)
 	{
 		delete[]test_matrix[i];
 	}
-
-	printf("Solution:\n");
-
+	printf("Acceleration = %lf\n", dS / dP);
+	printf("Solution\n");
 	for (i = 0; i < MATRIX_SIZE; ++i)
 	{
-		printf("x(%d) = %lf\n", i, result[i]);
+		printf("x(%d) = %lf              x(%d) = %lf \n", i, result[i], i, resultP[i]);
 	}
 
 	delete[] result;
+	delete[] rP;
 	return 0;
 }
