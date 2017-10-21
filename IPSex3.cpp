@@ -102,13 +102,13 @@ void ParallelGaussMethod(double **matrix, const int rows, double* result)
 	for (k = rows - 2; k >= 0; --k)
 	{
 		result[k] = matrix[k][rows];
-
+		cilk::reducer_opadd <double> res(result[k]);
 		//
 		for (int j = k + 1; j < rows; ++j)
 		{
-			result[k] -= matrix[k][j] * result[j];
+			res -= matrix[k][j] * result[j];
 		}
-
+		result[k] = res.get_value();
 		result[k] /= matrix[k][k];
 	}
 }
