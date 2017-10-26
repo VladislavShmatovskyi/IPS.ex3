@@ -2,9 +2,9 @@
 #include <ctime>
 #include <cilk/cilk.h>
 #include <cilk/reducer_opadd.h>
-//#include <chrono>
+#include <chrono>
 
-//using namespace std::chrono;
+using namespace std::chrono;
 
 // количество строк в исходной квадратной матрице
 const int MATRIX_SIZE = 1500;
